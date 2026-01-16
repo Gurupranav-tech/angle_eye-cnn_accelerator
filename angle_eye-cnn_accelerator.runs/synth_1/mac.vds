@@ -1,0 +1,39 @@
+#-----------------------------------------------------------
+# Vivado v2023.2 (64-bit)
+# SW Build 4029153 on Fri Oct 13 20:14:34 MDT 2023
+# IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
+# SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
+# Start of session at: Fri Jan 16 22:09:37 2026
+# Process ID: 26716
+# Current directory: C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/angle_eye-cnn_accelerator.runs/synth_1
+# Command line: vivado.exe -log mac.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source mac.tcl
+# Log file: C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/angle_eye-cnn_accelerator.runs/synth_1/mac.vds
+# Journal file: C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/angle_eye-cnn_accelerator.runs/synth_1\vivado.jou
+# Running On: gp, OS: Windows, CPU Frequency: 3194 MHz, CPU Physical cores: 16, Host memory: 16312 MB
+#-----------------------------------------------------------
+source mac.tcl -notrace
+create_project: Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 486.094 ; gain = 180.441
+Command: synth_design -top mac -part xc7k70tfbv676-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7k70t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7k70t'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 8232
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 932.375 ; gain = 443.320
+---------------------------------------------------------------------------------
+ERROR: [Synth 8-9917] port 'weights' must not be declared to be an array [C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/rtl/core/mac.v:11]
+ERROR: [Synth 8-9917] port 'data' must not be declared to be an array [C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/rtl/core/mac.v:12]
+INFO: [Synth 8-10285] module 'mac' is ignored due to previous errors [C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/rtl/core/mac.v:51]
+INFO: [Synth 8-9084] Verilog file 'C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/rtl/core/mac.v' ignored due to errors
+ERROR: [Synth 8-439] module 'mac' not found
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1038.910 ; gain = 549.855
+---------------------------------------------------------------------------------
+synthesize failed
+INFO: [Common 17-83] Releasing license: Synthesis
+7 Infos, 0 Warnings, 0 Critical Warnings and 4 Errors encountered.
+synth_design failed
+ERROR: [Common 17-69] Command failed: Vivado Synthesis failed
+INFO: [Common 17-206] Exiting Vivado at Fri Jan 16 22:09:55 2026...
