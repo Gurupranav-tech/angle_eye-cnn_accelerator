@@ -12,11 +12,9 @@ module vgg_block_pe (
     wire win_ready;
     wire [1:0] state;
     
-    // Internal 3x3 window data (needs sliding window logic)
     wire signed [7:0] window_data [0:8];
     wire signed [7:0] kernel_weights [0:8]; // Hardcoded or from BRAM
 
-    // 1. Instantiate the FSM Controller
     pe_controller controller_inst (
         .clk(clk),
         .reset_n(reset_n),
@@ -27,7 +25,6 @@ module vgg_block_pe (
         .current_state(state)
     );
 
-    // 2. Instantiate your MAC module
     mac #(.WIDTH(8), .ACCM_WIDTH(24), .KERNEL_SIZE(3)) mac_inst (
         .clk(clk),
         .reset(!reset_n),
@@ -38,9 +35,6 @@ module vgg_block_pe (
         .value(pixel_out)
     );
 
-    // 3. Pipeline the valid signal
-    // Your MAC code has a 1-cycle delay for the accumulator 
-    // and another for the 'value' output.
     reg [1:0] v_pipe;
     always @(posedge clk) v_pipe <= {v_pipe[0], win_ready};
     assign pixel_out_valid = v_pipe[1];

@@ -10,26 +10,24 @@ module pe_controller #(
     input  wire        pixel_in_valid,  // Comes from AXI Stream (tvalid)
     
     // Control Signals for Datapath
-    output reg         window_ready,    // Enables the MAC calculations
-    output reg         acc_clear,       // Resets your mac.v accumulator
-    output reg         output_valid,    // Signals that the output pixel is valid
-    output reg [2:0]   current_state    // Debugging state output
+    output reg         window_ready,
+    output reg         acc_clear, 
+    output reg         output_valid, 
+    output reg [2:0]   current_state  
 );
 
     // --- State Encoding ---
     localparam START   = 3'd0;
-    localparam LOAD    = 3'd1; // Filling line buffers
-    localparam CONV    = 3'd2; // Valid 3x3 window available
-    localparam PADDING = 3'd3; // Handling edge cases (optional)
+    localparam LOAD    = 3'd1;
+    localparam CONV    = 3'd2;
+    localparam PADDING = 3'd3;
     localparam END     = 3'd4;
 
     reg [2:0] state, next_state;
 
     // --- Counters ---
-    // Total count determines when we have enough data to start
     reg [31:0] total_pixel_cnt; 
     
-    // Row/Col counters determine X,Y position for boundary checks
     reg [10:0] col_cnt;
     reg [10:0] row_cnt;
 
@@ -91,8 +89,7 @@ module pe_controller #(
             
             // Default Control Signals
             current_state <= state;
-            
-            // 1. Counter Updates (Only increment on valid input)
+
             if (pixel_in_valid && (state == LOAD || state == CONV)) begin
                 total_pixel_cnt <= total_pixel_cnt + 1;
                 
@@ -108,28 +105,17 @@ module pe_controller #(
                 row_cnt <= 0;
             end
 
-            // 2. Window Ready Logic (Enable MAC)
-            // The MAC is active only when in CONV state AND we have a valid pixel coming in.
             if (state == CONV && pixel_in_valid) 
                 window_ready <= 1'b1;
             else 
                 window_ready <= 1'b0;
 
-            // 3. Accumulator Clear Logic (For your mac.v)
-            // We clear the accumulator if we are NOT ready to compute.
-            // This ensures it stays at 0 until a valid window arrives.
             if (state == CONV && pixel_in_valid)
                 acc_clear <= 1'b0; // Don't clear -> Accumulate
             else
                 acc_clear <= 1'b1; // Clear -> Reset sum
 
-            // 4. Output Valid Logic
-            // The 3x3 convolution output is only valid if the center of the kernel 
-            // is not on the padding border.
-            // Valid region: Rows [1..H-2], Cols [1..W-2]
             if (state == CONV && pixel_in_valid && window_ready) begin
-                // Assuming 'Same' padding output or 'Valid' cut
-                // For 'Valid' convolution (image shrinks):
                 if (row_cnt >= 2 && col_cnt >= 2) 
                     output_valid <= 1'b1;
                 else 
