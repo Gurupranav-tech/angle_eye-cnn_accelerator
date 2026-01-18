@@ -7,13 +7,13 @@ module pe_controller #(
     input  wire        clk,
     input  wire        reset_n,
     input  wire        start,
-    input  wire        pixel_in_valid,  // Comes from AXI Stream (tvalid)
+    input  wire        pixel_in_valid,
     
     // Control Signals for Datapath
-    output reg         window_ready,
-    output reg         acc_clear, 
-    output reg         output_valid, 
-    output reg [2:0]   current_state  
+    output reg         window_ready,    // Check if 3x3 window is formed
+    output reg         acc_clear,       // Clears the memory used by previous mac
+    output reg         output_valid,    // Checks if output is valid
+    output reg [2:0]   current_state    // State var
 );
 
     // --- State Encoding ---
@@ -68,7 +68,7 @@ module pe_controller #(
             end
 
             END: begin
-                // Handshake to finish frame (tlast logic would go here)
+                // Handshake to finish frame
                 next_state = START;
             end
 
