@@ -9,7 +9,6 @@ module control_unit #(parameter NUM_LAYERS = 7)(
     output reg dma_start,
     output reg pe_start,
     output reg active_in_buf, //A=0, B=1
-    output reg out_buf_clr,
     output reg [2:0] layer_type,
     output reg done
     );
@@ -26,6 +25,7 @@ module control_unit #(parameter NUM_LAYERS = 7)(
     reg [2:0] state;
     reg [2:0] next_state;
     reg [$clog2(NUM_LAYERS)-1:0] layer_idx;
+    reg dma_busy;
     
     always@(posedge clk or posedge reset) begin
         if (reset)
@@ -66,8 +66,8 @@ module control_unit #(parameter NUM_LAYERS = 7)(
         if (reset) begin
             dma_start <= 0;
             pe_start <= 0;
+            dma_busy <= 0;
             active_in_buf <= 0;
-            out_buf_clr <= 0;
              layer_type <= 0;
              layer_idx <= 0;
              done <= 0;
@@ -75,28 +75,41 @@ module control_unit #(parameter NUM_LAYERS = 7)(
         else begin
             dma_start <= 0;
             pe_start <= 0;
-            out_buf_clr <= 0;
             done <= 0;
             
             case (state)
-                IDLE: layer_idx <= 0;
+                IDLE: begin
+                    layer_idx <= 0;
+                    dma_busy <= 0;
+                end
                 
-                LOAD_INPUT: dma_start <= 1'b1;
+                LOAD_INPUT: begin
+                    if (!dma_busy) begin
+                        dma_start <= 1;
+                        dma_busy <= 1;
+                    end
+                end
                 
                 START_PE: pe_start <= 1'b1;
                 
                 WAIT_PE: begin
+                    if (!dma_busy && layer_idx < NUM_LAYERS - 1) begin
+                        dma_start <= 1;
+                        dma_busy <= 1;
+                    end
                 end
                 
                 SWAP_BUF: begin
                     active_in_buf <= ~active_in_buf;
-                    out_buf_clr <= 1'b1;
+                    dma_busy <= 0;
                 end
                 
                 NEXT_LAYER: layer_idx <= layer_idx + 1'b1;
                 
                 FINISH: done <= 1;
             endcase
+            
+            if (dma_done) dma_busy <= 0;
         end    
     end           
     
