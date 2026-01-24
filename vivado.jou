@@ -20,3 +20,6 @@ wait_on_run synth_1
 reset_run synth_1
 launch_runs synth_1 -jobs 16
 wait_on_run synth_1
+close [ open {C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/rtl/core/relu.v} w ]
+add_files {{C:/Users/GURU PRANAV PR/Desktop/angle_eye-cnn_accelerator/rtl/core/relu.v}}
+update_compile_order -fileset sources_1
